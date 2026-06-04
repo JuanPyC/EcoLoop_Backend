@@ -1,21 +1,34 @@
-import prisma from "../prismaClient";
+import { IStationsRepository } from "../../domain/repositories/IStationsRepository";
+import { WasteStation } from "../../domain/entities";
+import prisma from "../db/prismaClient";
 
-export const listStations = async () => {
-  return prisma.waste_stations.findMany({ include: { waste_bins: true }, orderBy: { created_at: 'desc' } });
-};
+export class PrismaStationsRepository implements IStationsRepository {
+  async listStations(): Promise<WasteStation[]> {
+    return prisma.waste_stations.findMany({
+      include: { waste_bins: true },
+      orderBy: { created_at: "desc" },
+    }) as any;
+  }
 
-export const getStationById = async (id: string) => {
-  return prisma.waste_stations.findUnique({ where: { id }, include: { waste_bins: true } });
-};
+  async getStationById(id: string): Promise<WasteStation | null> {
+    return prisma.waste_stations.findUnique({
+      where: { id },
+      include: { waste_bins: true },
+    }) as any;
+  }
 
-export const createStation = async (data: any) => {
-  return prisma.waste_stations.create({ data });
-};
+  async createStation(data: any): Promise<WasteStation> {
+    return prisma.waste_stations.create({ data }) as any;
+  }
 
-export const updateStation = async (id: string, data: any) => {
-  return prisma.waste_stations.update({ where: { id }, data });
-};
+  async updateStation(id: string, data: any): Promise<WasteStation> {
+    return prisma.waste_stations.update({ where: { id }, data }) as any;
+  }
 
-export const deleteStation = async (id: string) => {
-  return prisma.waste_stations.delete({ where: { id } });
-};
+  async deleteStation(id: string): Promise<WasteStation> {
+    return prisma.waste_stations.delete({ where: { id } }) as any;
+  }
+}
+
+export const stationsRepository = new PrismaStationsRepository();
+export default stationsRepository;

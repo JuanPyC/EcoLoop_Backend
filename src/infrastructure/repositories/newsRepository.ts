@@ -1,19 +1,26 @@
-import prisma from "../prismaClient";
+import { INewsRepository } from "../../domain/repositories/INewsRepository";
+import { NewsArticle } from "../../domain/entities";
+import prisma from "../db/prismaClient";
 
-export const listNews = async (filter?: { published?: boolean }) => {
-  const where: any = {};
-  if (filter?.published) where.published = true;
-  return prisma.news_articles.findMany({ where, orderBy: { created_at: 'desc' } });
-};
+export class PrismaNewsRepository implements INewsRepository {
+  async listNews(filter?: { published?: boolean }): Promise<NewsArticle[]> {
+    const where: any = {};
+    if (filter?.published) where.published = true;
+    return prisma.news_articles.findMany({ where, orderBy: { created_at: "desc" } }) as any;
+  }
 
-export const getNewsById = async (id: string) => {
-  return prisma.news_articles.findUnique({ where: { id } });
-};
+  async getNewsById(id: string): Promise<NewsArticle | null> {
+    return prisma.news_articles.findUnique({ where: { id } }) as any;
+  }
 
-export const createNews = async (data: any) => {
-  return prisma.news_articles.create({ data });
-};
+  async createNews(data: any): Promise<NewsArticle> {
+    return prisma.news_articles.create({ data }) as any;
+  }
 
-export const deleteNews = async (id: string) => {
-  return prisma.news_articles.delete({ where: { id } });
-};
+  async deleteNews(id: string): Promise<NewsArticle> {
+    return prisma.news_articles.delete({ where: { id } }) as any;
+  }
+}
+
+export const newsRepository = new PrismaNewsRepository();
+export default newsRepository;

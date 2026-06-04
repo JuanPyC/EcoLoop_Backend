@@ -1,24 +1,31 @@
-import prisma from "../prismaClient";
+import { IProductsRepository } from "../../domain/repositories/IProductsRepository";
+import { Product } from "../../domain/entities";
+import prisma from "../db/prismaClient";
 
-export const listProducts = async (filter?: { available?: boolean; category?: string }) => {
-  const where: any = {};
-  if (filter?.available) where.is_available = true;
-  if (filter?.category) where.category = filter.category;
-  return prisma.products.findMany({ where, orderBy: { name: 'asc' } });
-};
+export class PrismaProductsRepository implements IProductsRepository {
+  async listProducts(filter?: { available?: boolean; category?: string }): Promise<Product[]> {
+    const where: any = {};
+    if (filter?.available) where.is_available = true;
+    if (filter?.category) where.category = filter.category;
+    return prisma.products.findMany({ where, orderBy: { name: "asc" } }) as any;
+  }
 
-export const getProductById = async (id: string) => {
-  return prisma.products.findUnique({ where: { id } });
-};
+  async getProductById(id: string): Promise<Product | null> {
+    return prisma.products.findUnique({ where: { id } }) as any;
+  }
 
-export const createProduct = async (data: any) => {
-  return prisma.products.create({ data });
-};
+  async createProduct(data: any): Promise<Product> {
+    return prisma.products.create({ data }) as any;
+  }
 
-export const updateProduct = async (id: string, data: any) => {
-  return prisma.products.update({ where: { id }, data });
-};
+  async updateProduct(id: string, data: any): Promise<Product> {
+    return prisma.products.update({ where: { id }, data }) as any;
+  }
 
-export const deleteProduct = async (id: string) => {
-  return prisma.products.delete({ where: { id } });
-};
+  async deleteProduct(id: string): Promise<Product> {
+    return prisma.products.delete({ where: { id } }) as any;
+  }
+}
+
+export const productsRepository = new PrismaProductsRepository();
+export default productsRepository;

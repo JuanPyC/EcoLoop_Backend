@@ -4,14 +4,14 @@ import dotenv from "dotenv";
 import swaggerJsdoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
 
-import { stationsRouter } from "./routes/stations";
-import { productsRouter } from "./routes/products";
-import { transactionsRouter } from "./routes/transactions";
-import { newsRouter } from "./routes/news";
-import { profilesRouter } from "./routes/profiles";
-import { healthRouter } from "./routes/health";
-import { authRouter } from "./routes/auth";
-import { localRouter } from "./routes/local";
+import { stationsRouter } from "./interface/routes/stations";
+import { productsRouter } from "./interface/routes/products";
+import { transactionsRouter } from "./interface/routes/transactions";
+import { newsRouter } from "./interface/routes/news";
+import { profilesRouter } from "./interface/routes/profiles";
+import { healthRouter } from "./interface/routes/health";
+import { authRouter } from "./interface/routes/auth";
+import { localRouter } from "./interface/routes/local";
 
 dotenv.config();
 
@@ -19,10 +19,12 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 // Middleware
-app.use(cors({
-  origin: process.env.FRONTEND_URL || "http://localhost:3000",
-  credentials: true,
-}));
+app.use(
+  cors({
+    origin: process.env.FRONTEND_URL || "http://localhost:3000",
+    credentials: true,
+  })
+);
 app.use(express.json());
 
 // Swagger configuration
@@ -136,16 +138,20 @@ API para la plataforma EcoLoop de gestión de reciclaje y puntos ecológicos.
       },
     },
   },
-  apis: ["./src/routes/*.ts"],
+  apis: ["./src/interface/routes/*.ts"],
 };
 
 const swaggerSpec = swaggerJsdoc(swaggerOptions);
 
 // Swagger UI
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
-  customCssUrl: "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.11.0/swagger-ui.min.css",
-  customSiteTitle: "EcoLoop API Docs",
-}));
+app.use(
+  "/api-docs",
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerSpec, {
+    customCssUrl: "https://cdnjs.cloudflare.com/ajax/libs/swagger-ui/5.11.0/swagger-ui.min.css",
+    customSiteTitle: "EcoLoop API Docs",
+  })
+);
 
 // JSON spec endpoint
 app.get("/api-docs.json", (_req, res) => {
