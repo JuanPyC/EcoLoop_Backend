@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { newsController } from "../controllers/NewsController";
-import { authMiddleware } from "../../infrastructure/security/auth";
+import { authMiddleware, adminMiddleware } from "../../infrastructure/security/auth";
 
 export const newsRouter = Router();
 
@@ -70,7 +70,34 @@ newsRouter.get("/:id", newsController.getById);
  *       201:
  *         description: Creado
  */
-newsRouter.post("/", authMiddleware, newsController.create);
+newsRouter.post("/", authMiddleware, adminMiddleware, newsController.create);
+
+/**
+ * @openapi
+ * /api/news/{id}:
+ *   put:
+ *     summary: Actualizar artículo
+ *     tags: [News]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           format: uuid
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *     responses:
+ *       200:
+ *         description: OK
+ */
+newsRouter.put("/:id", authMiddleware, adminMiddleware, newsController.update);
 
 /**
  * @openapi
@@ -91,4 +118,5 @@ newsRouter.post("/", authMiddleware, newsController.create);
  *       204:
  *         description: Eliminado
  */
-newsRouter.delete("/:id", authMiddleware, newsController.delete);
+newsRouter.delete("/:id", authMiddleware, adminMiddleware, newsController.delete);
+

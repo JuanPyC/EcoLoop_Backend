@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { profilesController } from "../controllers/ProfilesController";
-import { authMiddleware } from "../../infrastructure/security/auth";
+import { authMiddleware, adminMiddleware } from "../../infrastructure/security/auth";
 
 export const profilesRouter = Router();
 
@@ -20,7 +20,7 @@ export const profilesRouter = Router();
  *       200:
  *         description: Lista de perfiles
  */
-profilesRouter.get("/", profilesController.list);
+profilesRouter.get("/", authMiddleware, adminMiddleware, profilesController.list);
 
 /**
  * @openapi
@@ -41,7 +41,7 @@ profilesRouter.get("/", profilesController.list);
  *       404:
  *         description: No encontrado
  */
-profilesRouter.get("/:id", profilesController.getById);
+profilesRouter.get("/:id", authMiddleware, profilesController.getById);
 
 /**
  * @openapi

@@ -1,8 +1,11 @@
 import { IProfilesRepository } from "../../../domain/repositories/IProfilesRepository";
-import { verifyPassword, generateToken } from "../../../infrastructure/security/auth";
+import { ISecurityService } from "../../../domain/services/ISecurityService";
 
 export class LoginUseCase {
-  constructor(private profilesRepo: IProfilesRepository) {}
+  constructor(
+    private profilesRepo: IProfilesRepository,
+    private securityService: ISecurityService
+  ) {}
 
   async execute(email: string, password: string) {
     if (!email || !password) {
@@ -14,12 +17,12 @@ export class LoginUseCase {
       throw new Error("Credenciales inválidas");
     }
 
-    const isPasswordValid = await verifyPassword(password, profile.password_hash);
+    const isPasswordValid = await this.securityService.verifyPassword(password, profile.password_hash);
     if (!isPasswordValid) {
       throw new Error("Credenciales inválidas");
     }
 
-    const token = generateToken({
+    const token = this.securityService.generateToken({
       userId: profile.id,
       email: profile.email,
       role: profile.role,

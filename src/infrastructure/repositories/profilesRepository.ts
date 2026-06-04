@@ -1,6 +1,7 @@
 import { IProfilesRepository } from "../../domain/repositories/IProfilesRepository";
 import { Profile } from "../../domain/entities";
 import prisma from "../db/prismaClient";
+import { NotFoundError } from "../../domain/errors";
 
 export class PrismaProfilesRepository implements IProfilesRepository {
   async listProfiles(filter?: { role?: string }): Promise<Profile[]> {
@@ -35,8 +36,18 @@ export class PrismaProfilesRepository implements IProfilesRepository {
     }) as any;
   }
 
-  async updateProfile(id: string, data: any): Promise<Profile> {
-    return prisma.profiles.update({ where: { id }, data }) as any;
+  async updateProfile(
+    id: string,
+    data: Partial<Omit<Profile, "id" | "password_hash" | "created_at" | "updated_at">> & { updated_at?: Date }
+  ): Promise<Profile> {
+    try {
+      return await prisma.profiles.update({ where: { id }, data }) as any;
+    } catch (error: any) {
+      if (error && (error.code === "P2025" || error.name === "NotFoundError")) {
+        throw new NotFoundError("Perfil no encontrado");
+      }
+      throw error;
+    }
   }
 }
 

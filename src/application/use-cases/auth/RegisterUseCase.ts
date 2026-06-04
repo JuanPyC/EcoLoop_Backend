@@ -1,8 +1,11 @@
 import { IProfilesRepository } from "../../../domain/repositories/IProfilesRepository";
-import { hashPassword, generateToken } from "../../../infrastructure/security/auth";
+import { ISecurityService } from "../../../domain/services/ISecurityService";
 
 export class RegisterUseCase {
-  constructor(private profilesRepo: IProfilesRepository) {}
+  constructor(
+    private profilesRepo: IProfilesRepository,
+    private securityService: ISecurityService
+  ) {}
 
   async execute(email: string, password: string, fullName?: string) {
     if (!email || !password) {
@@ -18,7 +21,7 @@ export class RegisterUseCase {
       throw new Error("El email ya está registrado");
     }
 
-    const passwordHash = await hashPassword(password);
+    const passwordHash = await this.securityService.hashPassword(password);
 
     const profile = await this.profilesRepo.createProfile({
       email,
@@ -27,7 +30,7 @@ export class RegisterUseCase {
       role: "user",
     });
 
-    const token = generateToken({
+    const token = this.securityService.generateToken({
       userId: profile.id,
       email: profile.email,
       role: profile.role,

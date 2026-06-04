@@ -11,5 +11,8 @@ export interface IProfilesRepository {
     role?: string;
     eco_points?: number;
   }): Promise<Profile>;
-  updateProfile(id: string, data: any): Promise<Profile>;
+  updateProfile(
+    id: string,
+    data: Partial<Omit<Profile, "id" | "password_hash" | "created_at" | "updated_at">> & { updated_at?: Date }
+  ): Promise<Profile>;
 }

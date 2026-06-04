@@ -2,10 +2,11 @@ import { Request, Response } from "express";
 import { LoginUseCase } from "../../application/use-cases/auth/LoginUseCase";
 import { RegisterUseCase } from "../../application/use-cases/auth/RegisterUseCase";
 import { profilesRepository } from "../../infrastructure/repositories/profilesRepository";
+import { bcryptJwtSecurityService } from "../../infrastructure/security/BcryptJwtSecurityService";
 
 export class AuthController {
-  private loginUseCase = new LoginUseCase(profilesRepository);
-  private registerUseCase = new RegisterUseCase(profilesRepository);
+  private loginUseCase = new LoginUseCase(profilesRepository, bcryptJwtSecurityService);
+  private registerUseCase = new RegisterUseCase(profilesRepository, bcryptJwtSecurityService);
 
   login = async (req: Request, res: Response) => {
     try {

@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { productsController } from "../controllers/ProductsController";
-import { authMiddleware } from "../../infrastructure/security/auth";
+import { authMiddleware, adminMiddleware } from "../../infrastructure/security/auth";
 
 export const productsRouter = Router();
 
@@ -72,7 +72,7 @@ productsRouter.get("/:id", productsController.getById);
  *       201:
  *         description: Creado
  */
-productsRouter.post("/", authMiddleware, productsController.create);
+productsRouter.post("/", authMiddleware, adminMiddleware, productsController.create);
 
 /**
  * @openapi
@@ -99,7 +99,7 @@ productsRouter.post("/", authMiddleware, productsController.create);
  *       200:
  *         description: OK
  */
-productsRouter.put("/:id", authMiddleware, productsController.update);
+productsRouter.put("/:id", authMiddleware, adminMiddleware, productsController.update);
 
 /**
  * @openapi
@@ -120,4 +120,4 @@ productsRouter.put("/:id", authMiddleware, productsController.update);
  *       204:
  *         description: Eliminado
  */
-productsRouter.delete("/:id", authMiddleware, productsController.delete);
+productsRouter.delete("/:id", authMiddleware, adminMiddleware, productsController.delete);
