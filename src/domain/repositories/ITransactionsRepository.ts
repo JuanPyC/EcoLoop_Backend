@@ -1,4 +1,10 @@
-import { Transaction, WasteBin } from "../entities";
+import { Transaction, WasteBin, WasteType } from "../entities";
+
+export interface RecyclingScanResult {
+  transaction: Transaction;
+  newPoints: number;
+  bin: WasteBin;
+}
 
 export interface ITransactionsRepository {
   findTransactions(filter?: { user_id?: string }): Promise<Transaction[]>;
@@ -11,4 +17,12 @@ export interface ITransactionsRepository {
   }): Promise<Transaction>;
   getProfilePoints(user_id: string): Promise<number>;
   updateProfilePoints(user_id: string, newPoints: number): Promise<any>;
+  executeRecyclingScan(params: {
+    user_id: string;
+    bin_id: string;
+    waste_type: WasteType;
+    points_earned: number;
+    new_capacity: number;
+    needs_attention: boolean;
+  }): Promise<RecyclingScanResult>;
 }

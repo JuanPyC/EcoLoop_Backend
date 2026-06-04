@@ -37,16 +37,26 @@ transactionsRouter.get("/", transactionsController.list);
  *         application/json:
  *           schema:
  *             type: object
- *             required: [user_id, qr_code]
+ *             required: [qr_code, weight]
  *             properties:
- *               user_id:
- *                 type: string
  *               qr_code:
  *                 type: string
+ *                 description: Código QR del contenedor escaneado
+ *               weight:
+ *                 type: number
+ *                 minimum: 0.01
+ *                 description: Peso (kg) de los residuos depositados
+ *               user_id:
+ *                 type: string
+ *                 description: (Opcional) Sólo si se ignora el token; siempre se prefiere req.user.userId
  *     responses:
  *       201:
  *         description: Transacción registrada exitosamente
  *       400:
- *         description: QR inválido o datos incorrectos
+ *         description: Datos inválidos o contenedor lleno
+ *       401:
+ *         description: No autorizado
+ *       404:
+ *         description: QR no encontrado
  */
 transactionsRouter.post("/scan", authMiddleware, transactionsController.scan);
