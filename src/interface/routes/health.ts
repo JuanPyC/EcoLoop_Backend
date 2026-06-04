@@ -5,7 +5,7 @@ export const healthRouter = Router();
 
 /**
  * @openapi
- * /api/health:
+ * /api/v1/health:
  *   get:
  *     summary: Health check del API
  *     tags: [Health]

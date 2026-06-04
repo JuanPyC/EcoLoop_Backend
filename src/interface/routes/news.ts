@@ -6,7 +6,7 @@ export const newsRouter = Router();
 
 /**
  * @openapi
- * /api/news:
+ * /api/v1/news:
  *   get:
  *     summary: Listar artículos de noticias
  *     tags: [News]
@@ -23,7 +23,7 @@ newsRouter.get("/", newsController.list);
 
 /**
  * @openapi
- * /api/news/{id}:
+ * /api/v1/news/{id}:
  *   get:
  *     summary: Obtener un artículo por ID
  *     tags: [News]
@@ -44,7 +44,7 @@ newsRouter.get("/:id", newsController.getById);
 
 /**
  * @openapi
- * /api/news:
+ * /api/v1/news:
  *   post:
  *     summary: Crear artículo
  *     tags: [News]
@@ -74,7 +74,7 @@ newsRouter.post("/", authMiddleware, adminMiddleware, newsController.create);
 
 /**
  * @openapi
- * /api/news/{id}:
+ * /api/v1/news/{id}:
  *   put:
  *     summary: Actualizar artículo
  *     tags: [News]
@@ -101,7 +101,7 @@ newsRouter.put("/:id", authMiddleware, adminMiddleware, newsController.update);
 
 /**
  * @openapi
- * /api/news/{id}:
+ * /api/v1/news/{id}:
  *   delete:
  *     summary: Eliminar artículo
  *     tags: [News]

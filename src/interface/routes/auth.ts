@@ -6,7 +6,7 @@ export const authRouter = Router();
 
 /**
  * @openapi
- * /api/auth/login:
+ * /api/v1/auth/login:
  *   post:
  *     summary: Login de usuario
  *     tags: [Auth]
@@ -34,7 +34,7 @@ authRouter.post("/login", authController.login);
 
 /**
  * @openapi
- * /api/auth/register:
+ * /api/v1/auth/register:
  *   post:
  *     summary: Registro de nuevo usuario
  *     tags: [Auth]
@@ -60,7 +60,7 @@ authRouter.post("/register", authController.register);
 
 /**
  * @openapi
- * /api/auth/me:
+ * /api/v1/auth/me:
  *   get:
  *     summary: Obtener perfil del usuario autenticado
  *     tags: [Auth]
@@ -74,7 +74,7 @@ authRouter.get("/me", authMiddleware, authController.me);
 
 /**
  * @openapi
- * /api/auth/logout:
+ * /api/v1/auth/logout:
  *   post:
  *     summary: Cerrar sesión
  *     tags: [Auth]

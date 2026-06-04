@@ -160,14 +160,14 @@ app.get("/api-docs.json", (_req, res) => {
 });
 
 // Routes
-app.use("/api/health", healthRouter);
-app.use("/api/auth", authRouter);
-app.use("/api/stations", stationsRouter);
-app.use("/api/products", productsRouter);
-app.use("/api/transactions", transactionsRouter);
-app.use("/api/news", newsRouter);
-app.use("/api/profiles", profilesRouter);
-app.use("/api/local", localRouter);
+app.use("/api/v1/health", healthRouter);
+app.use("/api/v1/auth", authRouter);
+app.use("/api/v1/stations", stationsRouter);
+app.use("/api/v1/products", productsRouter);
+app.use("/api/v1/transactions", transactionsRouter);
+app.use("/api/v1/news", newsRouter);
+app.use("/api/v1/profiles", profilesRouter);
+app.use("/api/v1/local", localRouter);
 
 // Root
 app.get("/", (_req, res) => {
@@ -176,12 +176,12 @@ app.get("/", (_req, res) => {
     version: "1.0.0",
     docs: `/api-docs`,
     endpoints: [
-      "GET /api/health",
-      "GET /api/stations",
-      "GET /api/products",
-      "GET /api/transactions",
-      "GET /api/news",
-      "GET /api/profiles",
+      "GET /api/v1/health",
+      "GET /api/v1/stations",
+      "GET /api/v1/products",
+      "GET /api/v1/transactions",
+      "GET /api/v1/news",
+      "GET /api/v1/profiles",
     ],
   });
 });

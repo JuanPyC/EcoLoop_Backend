@@ -6,7 +6,7 @@ export const productsRouter = Router();
 
 /**
  * @openapi
- * /api/products:
+ * /api/v1/products:
  *   get:
  *     summary: Listar todos los productos
  *     tags: [Products]
@@ -27,7 +27,7 @@ productsRouter.get("/", productsController.list);
 
 /**
  * @openapi
- * /api/products/{id}:
+ * /api/v1/products/{id}:
  *   get:
  *     summary: Obtener un producto por ID
  *     tags: [Products]
@@ -48,7 +48,7 @@ productsRouter.get("/:id", productsController.getById);
 
 /**
  * @openapi
- * /api/products:
+ * /api/v1/products:
  *   post:
  *     summary: Crear un nuevo producto
  *     tags: [Products]
@@ -76,7 +76,7 @@ productsRouter.post("/", authMiddleware, adminMiddleware, productsController.cre
 
 /**
  * @openapi
- * /api/products/{id}:
+ * /api/v1/products/{id}:
  *   put:
  *     summary: Actualizar un producto
  *     tags: [Products]
@@ -103,7 +103,7 @@ productsRouter.put("/:id", authMiddleware, adminMiddleware, productsController.u
 
 /**
  * @openapi
- * /api/products/{id}:
+ * /api/v1/products/{id}:
  *   delete:
  *     summary: Eliminar un producto
  *     tags: [Products]

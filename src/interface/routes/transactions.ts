@@ -6,7 +6,7 @@ export const transactionsRouter = Router();
 
 /**
  * @openapi
- * /api/transactions:
+ * /api/v1/transactions:
  *   get:
  *     summary: Listar transacciones
  *     tags: [Transactions]
@@ -25,7 +25,7 @@ transactionsRouter.get("/", transactionsController.list);
 
 /**
  * @openapi
- * /api/transactions/scan:
+ * /api/v1/transactions/scan:
  *   post:
  *     summary: Registrar escaneo de QR (flujo completo de reciclaje)
  *     tags: [Transactions]

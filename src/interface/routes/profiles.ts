@@ -6,7 +6,7 @@ export const profilesRouter = Router();
 
 /**
  * @openapi
- * /api/profiles:
+ * /api/v1/profiles:
  *   get:
  *     summary: Listar todos los perfiles
  *     tags: [Profiles]
@@ -24,7 +24,7 @@ profilesRouter.get("/", authMiddleware, adminMiddleware, profilesController.list
 
 /**
  * @openapi
- * /api/profiles/{id}:
+ * /api/v1/profiles/{id}:
  *   get:
  *     summary: Obtener perfil por ID
  *     tags: [Profiles]
@@ -45,7 +45,7 @@ profilesRouter.get("/:id", authMiddleware, profilesController.getById);
 
 /**
  * @openapi
- * /api/profiles/{id}:
+ * /api/v1/profiles/{id}:
  *   put:
  *     summary: Actualizar perfil
  *     tags: [Profiles]

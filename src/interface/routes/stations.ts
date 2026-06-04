@@ -6,7 +6,7 @@ export const stationsRouter = Router();
 
 /**
  * @openapi
- * /api/stations:
+ * /api/v1/stations:
  *   get:
  *     summary: Listar todas las estaciones
  *     tags: [Stations]
@@ -18,7 +18,7 @@ stationsRouter.get("/", stationsController.list);
 
 /**
  * @openapi
- * /api/stations/{id}:
+ * /api/v1/stations/{id}:
  *   get:
  *     summary: Obtener una estación por ID
  *     tags: [Stations]
@@ -39,7 +39,7 @@ stationsRouter.get("/:id", stationsController.getById);
 
 /**
  * @openapi
- * /api/stations:
+ * /api/v1/stations:
  *   post:
  *     summary: Crear una nueva estación
  *     tags: [Stations]
@@ -67,7 +67,7 @@ stationsRouter.post("/", authMiddleware, stationsController.create);
 
 /**
  * @openapi
- * /api/stations/{id}:
+ * /api/v1/stations/{id}:
  *   put:
  *     summary: Actualizar una estación
  *     tags: [Stations]
@@ -94,7 +94,7 @@ stationsRouter.put("/:id", authMiddleware, stationsController.update);
 
 /**
  * @openapi
- * /api/stations/{id}:
+ * /api/v1/stations/{id}:
  *   delete:
  *     summary: Eliminar una estación
  *     tags: [Stations]
