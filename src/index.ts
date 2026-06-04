@@ -12,6 +12,8 @@ import { profilesRouter } from "./interface/routes/profiles";
 import { healthRouter } from "./interface/routes/health";
 import { authRouter } from "./interface/routes/auth";
 import { localRouter } from "./interface/routes/local";
+import { redemptionsRouter } from "./interface/routes/redemptions";
+import { quizzesRouter } from "./interface/routes/quizzes";
 
 dotenv.config();
 
@@ -167,6 +169,8 @@ app.use("/api/v1/products", productsRouter);
 app.use("/api/v1/transactions", transactionsRouter);
 app.use("/api/v1/news", newsRouter);
 app.use("/api/v1/profiles", profilesRouter);
+app.use("/api/v1/redemptions", redemptionsRouter);
+app.use("/api/v1/quizzes", quizzesRouter);
 app.use("/api/v1/local", localRouter);
 
 // Root
@@ -182,6 +186,7 @@ app.get("/", (_req, res) => {
       "GET /api/v1/transactions",
       "GET /api/v1/news",
       "GET /api/v1/profiles",
+      "GET /api/v1/quizzes",
     ],
   });
 });
