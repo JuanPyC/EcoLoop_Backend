@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { EmptyBinUseCase } from "./EmptyBinUseCase";
 import { IBinsRepository } from "../../../domain/repositories/IBinsRepository";
-import { NotFoundError } from "../../../domain/errors";
+import { NotFoundError, ValidationError } from "../../../domain/errors";
 import { WasteBin } from "../../../domain/entities";
 
 describe("EmptyBinUseCase", () => {
@@ -56,10 +56,10 @@ describe("EmptyBinUseCase", () => {
     expect(mockBinsRepo.emptyBin).not.toHaveBeenCalled();
   });
 
-  it("should throw error if ID is empty", async () => {
+  it("should throw ValidationError if ID is empty", async () => {
     const useCase = new EmptyBinUseCase(mockBinsRepo);
 
-    await expect(useCase.execute("")).rejects.toThrow("El ID del contenedor es requerido");
+    await expect(useCase.execute("")).rejects.toThrow(ValidationError);
     expect(mockBinsRepo.findBinById).not.toHaveBeenCalled();
   });
 });

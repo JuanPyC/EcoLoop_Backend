@@ -1,12 +1,12 @@
 import { IBinsRepository } from "../../../domain/repositories/IBinsRepository";
-import { NotFoundError } from "../../../domain/errors";
+import { NotFoundError, ValidationError } from "../../../domain/errors";
 
 export class GetBinByQrUseCase {
   constructor(private binsRepo: IBinsRepository) {}
 
   async execute(qrCode: string) {
     if (!qrCode) {
-      throw new Error("Código QR es requerido");
+      throw new ValidationError("Código QR es requerido");
     }
 
     const bin = await this.binsRepo.findBinByQr(qrCode);

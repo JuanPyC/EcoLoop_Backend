@@ -76,4 +76,22 @@ describe("UpdateBinCapacityUseCase", () => {
     expect(mockBinsRepo.findBinById).toHaveBeenCalledWith("non-existent-bin");
     expect(mockBinsRepo.updateBinCapacity).not.toHaveBeenCalled();
   });
+
+  it("should throw ValidationError if capacity is undefined, null, or not a number", async () => {
+    const useCase = new UpdateBinCapacityUseCase(mockBinsRepo);
+
+    await expect(useCase.execute("bin-123", undefined as any, 10)).rejects.toThrow(ValidationError);
+    await expect(useCase.execute("bin-123", null as any, 10)).rejects.toThrow(ValidationError);
+    await expect(useCase.execute("bin-123", "not-a-number" as any, 10)).rejects.toThrow(ValidationError);
+    expect(mockBinsRepo.updateBinCapacity).not.toHaveBeenCalled();
+  });
+
+  it("should throw ValidationError if currentWeight is undefined, null, or not a number", async () => {
+    const useCase = new UpdateBinCapacityUseCase(mockBinsRepo);
+
+    await expect(useCase.execute("bin-123", 50, undefined as any)).rejects.toThrow(ValidationError);
+    await expect(useCase.execute("bin-123", 50, null as any)).rejects.toThrow(ValidationError);
+    await expect(useCase.execute("bin-123", 50, "not-a-number" as any)).rejects.toThrow(ValidationError);
+    expect(mockBinsRepo.updateBinCapacity).not.toHaveBeenCalled();
+  });
 });

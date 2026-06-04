@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { GetBinByQrUseCase } from "./GetBinByQrUseCase";
 import { IBinsRepository } from "../../../domain/repositories/IBinsRepository";
-import { NotFoundError } from "../../../domain/errors";
+import { NotFoundError, ValidationError } from "../../../domain/errors";
 import { WasteBin } from "../../../domain/entities";
 
 describe("GetBinByQrUseCase", () => {
@@ -46,10 +46,10 @@ describe("GetBinByQrUseCase", () => {
     expect(mockBinsRepo.findBinByQr).toHaveBeenCalledWith("non-existent-qr");
   });
 
-  it("should throw error if QR code is empty", async () => {
+  it("should throw ValidationError if QR code is empty", async () => {
     const useCase = new GetBinByQrUseCase(mockBinsRepo);
 
-    await expect(useCase.execute("")).rejects.toThrow("Código QR es requerido");
+    await expect(useCase.execute("")).rejects.toThrow(ValidationError);
     expect(mockBinsRepo.findBinByQr).not.toHaveBeenCalled();
   });
 });
