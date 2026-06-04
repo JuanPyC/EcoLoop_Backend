@@ -137,6 +137,50 @@ API para la plataforma EcoLoop de gestión de reciclaje y puntos ecológicos.
             message: { type: "string" },
           },
         },
+        Quiz: {
+          type: "object",
+          properties: {
+            id: { type: "string", format: "uuid" },
+            title: { type: "string", example: "Cuestionario de Reciclaje" },
+            description: { type: "string", example: "Pon a prueba tus conocimientos sobre reciclaje" },
+            points_reward: { type: "integer", example: 50 },
+            is_active: { type: "boolean", example: true },
+            created_at: { type: "string", format: "date-time" },
+            quiz_questions: {
+              type: "array",
+              items: {
+                $ref: "#/components/schemas/QuizQuestion",
+              },
+            },
+          },
+        },
+        QuizQuestion: {
+          type: "object",
+          properties: {
+            id: { type: "string", format: "uuid" },
+            quiz_id: { type: "string", format: "uuid" },
+            question: { type: "string", example: "¿Cuál de estos materiales es reciclable?" },
+            wrong_answer_1: { type: "string", example: "Poliestireno" },
+            wrong_answer_2: { type: "string", example: "Papel carbón" },
+            wrong_answer_3: { type: "string", example: "Espejos" },
+            order_index: { type: "integer", example: 1 },
+            created_at: { type: "string", format: "date-time" },
+          },
+        },
+        QuizCompletion: {
+          type: "object",
+          properties: {
+            id: { type: "string", format: "uuid" },
+            user_id: { type: "string", format: "uuid" },
+            quiz_id: { type: "string", format: "uuid" },
+            score: { type: "integer", example: 5 },
+            points_earned: { type: "integer", example: 50 },
+            completed_at: { type: "string", format: "date-time" },
+            quiz: {
+              $ref: "#/components/schemas/Quiz",
+            },
+          },
+        },
       },
     },
   },
@@ -186,6 +230,7 @@ app.get("/", (_req, res) => {
       "GET /api/v1/transactions",
       "GET /api/v1/news",
       "GET /api/v1/profiles",
+      "GET /api/v1/redemptions",
       "GET /api/v1/quizzes",
     ],
   });
