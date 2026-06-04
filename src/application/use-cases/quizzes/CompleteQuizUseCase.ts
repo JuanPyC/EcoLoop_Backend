@@ -5,7 +5,7 @@ import { NotFoundError, ValidationError } from "../../../domain/errors";
 export interface CompleteQuizInput {
   user_id: string;
   quiz_id: string;
-  score: number;
+  answers: { question_id: string; selected_answer: string }[];
 }
 
 export class CompleteQuizUseCase {
@@ -15,14 +15,10 @@ export class CompleteQuizUseCase {
   ) {}
 
   async execute(input: CompleteQuizInput) {
-    const { user_id, quiz_id, score } = input;
+    const { user_id, quiz_id, answers } = input;
 
-    if (!user_id || !quiz_id || score === undefined || score === null) {
-      throw new ValidationError("user_id, quiz_id y score son requeridos");
-    }
-
-    if (score < 0) {
-      throw new ValidationError("El score no puede ser negativo");
+    if (!user_id || !quiz_id || !answers || !Array.isArray(answers)) {
+      throw new ValidationError("user_id, quiz_id y answers (array) son requeridos");
     }
 
     // 1. Get quiz and verify it exists
@@ -49,35 +45,37 @@ export class CompleteQuizUseCase {
       throw new ValidationError("El usuario ya ha completado este quiz");
     }
 
-    // 5. Calculate points earned securely
-    const totalQuestions = quiz.quiz_questions?.length || 0;
-    let pointsEarned = 0;
-    if (totalQuestions > 0) {
-      if (score > totalQuestions) {
-        throw new ValidationError("El score no puede ser mayor que el número total de preguntas");
-      }
-      pointsEarned = Math.round((score / totalQuestions) * quiz.points_reward);
-    } else {
-      pointsEarned = quiz.points_reward;
+    // 5. Verify the quiz has at least one question
+    const questions = quiz.quiz_questions || [];
+    const totalQuestions = questions.length;
+    if (totalQuestions === 0) {
+      throw new ValidationError("Este quiz no tiene preguntas configuradas");
     }
 
-    // 6. Create quiz completion
-    const completion = await this.quizzesRepo.createQuizCompletion({
+    // 6. Grade the answers on the server
+    let score = 0;
+    for (const question of questions) {
+      const submitted = answers.find((ans) => ans.question_id === question.id);
+      if (submitted && submitted.selected_answer === question.correct_answer) {
+        score++;
+      }
+    }
+
+    // 7. Calculate points earned securely
+    const pointsEarned = Math.round((score / totalQuestions) * quiz.points_reward);
+
+    // 8. Persist completion and update eco points atomically in a single transaction
+    const completion = await this.quizzesRepo.completeQuizTransaction({
       user_id,
       quiz_id,
       score,
       points_earned: pointsEarned,
     });
 
-    // 7. Update profile's eco points
-    const updatedProfile = await this.profilesRepo.updateProfile(user_id, {
-      eco_points: profile.eco_points + pointsEarned,
-    });
-
     return {
       completion,
       points_earned: pointsEarned,
-      total_points: updatedProfile.eco_points,
+      total_points: profile.eco_points + pointsEarned,
     };
   }
 }

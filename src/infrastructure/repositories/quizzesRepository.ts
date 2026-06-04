@@ -9,7 +9,7 @@ export class PrismaQuizzesRepository implements IQuizzesRepository {
     if (activeOnly) {
       where.is_active = true;
     }
-    return prisma.quizzes.findMany({
+    const result = await prisma.quizzes.findMany({
       where,
       include: {
         quiz_questions: {
@@ -21,11 +21,12 @@ export class PrismaQuizzesRepository implements IQuizzesRepository {
       orderBy: {
         created_at: "desc",
       },
-    }) as any;
+    });
+    return result as unknown as Quiz[];
   }
 
   async getQuizById(id: string): Promise<Quiz | null> {
-    return prisma.quizzes.findUnique({
+    const result = await prisma.quizzes.findUnique({
       where: { id },
       include: {
         quiz_questions: {
@@ -34,7 +35,8 @@ export class PrismaQuizzesRepository implements IQuizzesRepository {
           },
         },
       },
-    }) as any;
+    });
+    return result as unknown as Quiz | null;
   }
 
   async createQuizCompletion(data: {
@@ -44,7 +46,7 @@ export class PrismaQuizzesRepository implements IQuizzesRepository {
     points_earned: number;
   }): Promise<QuizCompletion> {
     try {
-      return await prisma.quiz_completions.create({
+      const result = await prisma.quiz_completions.create({
         data: {
           user_id: data.user_id,
           quiz_id: data.quiz_id,
@@ -54,7 +56,8 @@ export class PrismaQuizzesRepository implements IQuizzesRepository {
         include: {
           quiz: true,
         },
-      }) as any;
+      });
+      return result as unknown as QuizCompletion;
     } catch (error: any) {
       if (error && error.code === "P2002") {
         throw new ValidationError("El usuario ya ha completado este cuestionario.");
@@ -67,7 +70,7 @@ export class PrismaQuizzesRepository implements IQuizzesRepository {
   }
 
   async getCompletionsByUser(userId: string): Promise<QuizCompletion[]> {
-    return prisma.quiz_completions.findMany({
+    const result = await prisma.quiz_completions.findMany({
       where: { user_id: userId },
       include: {
         quiz: true,
@@ -75,7 +78,56 @@ export class PrismaQuizzesRepository implements IQuizzesRepository {
       orderBy: {
         completed_at: "desc",
       },
-    }) as any;
+    });
+    return result as unknown as QuizCompletion[];
+  }
+
+  async completeQuizTransaction(data: {
+    user_id: string;
+    quiz_id: string;
+    score: number;
+    points_earned: number;
+  }): Promise<QuizCompletion> {
+    try {
+      const result = await prisma.$transaction(async (tx) => {
+        // 1. Create quiz completion
+        const completion = await tx.quiz_completions.create({
+          data: {
+            user_id: data.user_id,
+            quiz_id: data.quiz_id,
+            score: data.score,
+            points_earned: data.points_earned,
+          },
+          include: {
+            quiz: true,
+          },
+        });
+
+        // 2. Increment profile eco_points atomically
+        await tx.profiles.update({
+          where: { id: data.user_id },
+          data: {
+            eco_points: {
+              increment: data.points_earned,
+            },
+          },
+        });
+
+        return completion;
+      });
+      return result as unknown as QuizCompletion;
+    } catch (error: any) {
+      if (error && error.code === "P2002") {
+        throw new ValidationError("El usuario ya ha completado este cuestionario.");
+      }
+      if (error && error.code === "P2003") {
+        throw new NotFoundError("Usuario o cuestionario no encontrado.");
+      }
+      if (error && error.code === "P2025") {
+        throw new NotFoundError("Usuario no encontrado.");
+      }
+      throw error;
+    }
   }
 }
 

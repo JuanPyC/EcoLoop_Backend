@@ -10,4 +10,10 @@ export interface IQuizzesRepository {
     points_earned: number;
   }): Promise<QuizCompletion>;
   getCompletionsByUser(userId: string): Promise<QuizCompletion[]>;
+  completeQuizTransaction(data: {
+    user_id: string;
+    quiz_id: string;
+    score: number;
+    points_earned: number;
+  }): Promise<QuizCompletion>;
 }
