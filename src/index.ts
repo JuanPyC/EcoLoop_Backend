@@ -11,7 +11,6 @@ import { newsRouter } from "./interface/routes/news";
 import { profilesRouter } from "./interface/routes/profiles";
 import { healthRouter } from "./interface/routes/health";
 import { authRouter } from "./interface/routes/auth";
-import { localRouter } from "./interface/routes/local";
 import { redemptionsRouter } from "./interface/routes/redemptions";
 import { quizzesRouter } from "./interface/routes/quizzes";
 import { binsRouter } from "./interface/routes/bins";
@@ -219,7 +218,6 @@ app.use("/api/v1/redemptions", redemptionsRouter);
 app.use("/api/v1/quizzes", quizzesRouter);
 app.use("/api/v1/bins", binsRouter);
 app.use("/api/v1/admin", adminRouter);
-app.use("/api/v1/local", localRouter);
 
 // Root
 app.get("/", (_req, res) => {
