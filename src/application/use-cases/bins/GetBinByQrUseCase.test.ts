@@ -50,6 +50,7 @@ describe("GetBinByQrUseCase", () => {
     const useCase = new GetBinByQrUseCase(mockBinsRepo);
 
     await expect(useCase.execute("")).rejects.toThrow(ValidationError);
+    await expect(useCase.execute("   ")).rejects.toThrow(ValidationError);
     expect(mockBinsRepo.findBinByQr).not.toHaveBeenCalled();
   });
 });

@@ -5,6 +5,10 @@ export class UpdateBinCapacityUseCase {
   constructor(private binsRepo: IBinsRepository) {}
 
   async execute(id: string, capacity: number, currentWeight: number) {
+    if (!id || typeof id !== "string" || id.trim() === "") {
+      throw new ValidationError("El ID del contenedor es requerido y debe ser un texto no vacío");
+    }
+
     if (capacity === undefined || capacity === null || typeof capacity !== "number") {
       throw new ValidationError("La capacidad es requerida y debe ser un número");
     }
@@ -18,11 +22,6 @@ export class UpdateBinCapacityUseCase {
 
     if (currentWeight < 0) {
       throw new ValidationError("El peso no puede ser negativo");
-    }
-
-    const binExists = await this.binsRepo.findBinById(id);
-    if (!binExists) {
-      throw new NotFoundError("Contenedor no encontrado");
     }
 
     return this.binsRepo.updateBinCapacity(id, capacity, currentWeight);

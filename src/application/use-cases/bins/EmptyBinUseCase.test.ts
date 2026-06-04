@@ -36,12 +36,10 @@ describe("EmptyBinUseCase", () => {
       updated_at: new Date(),
     };
 
-    vi.mocked(mockBinsRepo.findBinById).mockResolvedValueOnce(mockBin);
     vi.mocked(mockBinsRepo.emptyBin).mockResolvedValueOnce(emptiedBin);
 
     const result = await useCase.execute("bin-123");
 
-    expect(mockBinsRepo.findBinById).toHaveBeenCalledWith("bin-123");
     expect(mockBinsRepo.emptyBin).toHaveBeenCalledWith("bin-123");
     expect(result).toEqual(emptiedBin);
   });
@@ -49,17 +47,17 @@ describe("EmptyBinUseCase", () => {
   it("should throw NotFoundError if the waste bin does not exist", async () => {
     const useCase = new EmptyBinUseCase(mockBinsRepo);
 
-    vi.mocked(mockBinsRepo.findBinById).mockResolvedValueOnce(null);
+    vi.mocked(mockBinsRepo.emptyBin).mockRejectedValueOnce(new NotFoundError("Contenedor no encontrado"));
 
     await expect(useCase.execute("non-existent-bin")).rejects.toThrow(NotFoundError);
-    expect(mockBinsRepo.findBinById).toHaveBeenCalledWith("non-existent-bin");
-    expect(mockBinsRepo.emptyBin).not.toHaveBeenCalled();
+    expect(mockBinsRepo.emptyBin).toHaveBeenCalledWith("non-existent-bin");
   });
 
   it("should throw ValidationError if ID is empty", async () => {
     const useCase = new EmptyBinUseCase(mockBinsRepo);
 
     await expect(useCase.execute("")).rejects.toThrow(ValidationError);
-    expect(mockBinsRepo.findBinById).not.toHaveBeenCalled();
+    await expect(useCase.execute("   ")).rejects.toThrow(ValidationError);
+    expect(mockBinsRepo.emptyBin).not.toHaveBeenCalled();
   });
 });

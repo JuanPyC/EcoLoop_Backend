@@ -36,12 +36,10 @@ describe("UpdateBinCapacityUseCase", () => {
       updated_at: new Date(),
     };
 
-    vi.mocked(mockBinsRepo.findBinById).mockResolvedValueOnce(mockBin);
     vi.mocked(mockBinsRepo.updateBinCapacity).mockResolvedValueOnce(updatedBin);
 
     const result = await useCase.execute("bin-123", 85, 12.5);
 
-    expect(mockBinsRepo.findBinById).toHaveBeenCalledWith("bin-123");
     expect(mockBinsRepo.updateBinCapacity).toHaveBeenCalledWith("bin-123", 85, 12.5);
     expect(result).toEqual(updatedBin);
   });
@@ -70,11 +68,10 @@ describe("UpdateBinCapacityUseCase", () => {
   it("should throw NotFoundError if the waste bin does not exist", async () => {
     const useCase = new UpdateBinCapacityUseCase(mockBinsRepo);
 
-    vi.mocked(mockBinsRepo.findBinById).mockResolvedValueOnce(null);
+    vi.mocked(mockBinsRepo.updateBinCapacity).mockRejectedValueOnce(new NotFoundError("Contenedor no encontrado"));
 
     await expect(useCase.execute("non-existent-bin", 50, 10)).rejects.toThrow(NotFoundError);
-    expect(mockBinsRepo.findBinById).toHaveBeenCalledWith("non-existent-bin");
-    expect(mockBinsRepo.updateBinCapacity).not.toHaveBeenCalled();
+    expect(mockBinsRepo.updateBinCapacity).toHaveBeenCalledWith("non-existent-bin", 50, 10);
   });
 
   it("should throw ValidationError if capacity is undefined, null, or not a number", async () => {

@@ -28,9 +28,16 @@ export class PrismaBinsRepository implements IBinsRepository {
         },
       });
       return bin as WasteBin;
-    } catch (error: any) {
-      if (error && (error.code === "P2025" || error.name === "NotFoundError")) {
-        throw new NotFoundError("Contenedor no encontrado");
+    } catch (error: unknown) {
+      if (
+        error &&
+        typeof error === "object" &&
+        ("code" in error || "name" in error)
+      ) {
+        const errObj = error as { code?: string; name?: string };
+        if (errObj.code === "P2025" || errObj.name === "NotFoundError") {
+          throw new NotFoundError("Contenedor no encontrado");
+        }
       }
       throw error;
     }
@@ -46,9 +53,16 @@ export class PrismaBinsRepository implements IBinsRepository {
         },
       });
       return bin as WasteBin;
-    } catch (error: any) {
-      if (error && (error.code === "P2025" || error.name === "NotFoundError")) {
-        throw new NotFoundError("Contenedor no encontrado");
+    } catch (error: unknown) {
+      if (
+        error &&
+        typeof error === "object" &&
+        ("code" in error || "name" in error)
+      ) {
+        const errObj = error as { code?: string; name?: string };
+        if (errObj.code === "P2025" || errObj.name === "NotFoundError") {
+          throw new NotFoundError("Contenedor no encontrado");
+        }
       }
       throw error;
     }

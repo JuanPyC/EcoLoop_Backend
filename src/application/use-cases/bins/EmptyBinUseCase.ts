@@ -5,13 +5,8 @@ export class EmptyBinUseCase {
   constructor(private binsRepo: IBinsRepository) {}
 
   async execute(id: string) {
-    if (!id) {
-      throw new ValidationError("El ID del contenedor es requerido");
-    }
-
-    const binExists = await this.binsRepo.findBinById(id);
-    if (!binExists) {
-      throw new NotFoundError("Contenedor no encontrado");
+    if (!id || typeof id !== "string" || id.trim() === "") {
+      throw new ValidationError("El ID del contenedor es requerido y debe ser un texto no vacío");
     }
 
     return this.binsRepo.emptyBin(id);
