@@ -18,6 +18,14 @@ export class PrismaBinsRepository implements IBinsRepository {
     return bin as WasteBin | null;
   }
 
+  async listBins(): Promise<WasteBin[]> {
+    const bins = await prisma.waste_bins.findMany({
+      include: { station: true },
+      orderBy: { created_at: "desc" },
+    });
+    return bins as unknown as WasteBin[];
+  }
+
   async updateBinCapacity(id: string, capacity: number, currentWeight: number): Promise<WasteBin> {
     try {
       const bin = await prisma.waste_bins.update({

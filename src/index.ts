@@ -15,6 +15,7 @@ import { localRouter } from "./interface/routes/local";
 import { redemptionsRouter } from "./interface/routes/redemptions";
 import { quizzesRouter } from "./interface/routes/quizzes";
 import { binsRouter } from "./interface/routes/bins";
+import { adminRouter } from "./interface/routes/admin";
 
 dotenv.config();
 
@@ -217,6 +218,7 @@ app.use("/api/v1/profiles", profilesRouter);
 app.use("/api/v1/redemptions", redemptionsRouter);
 app.use("/api/v1/quizzes", quizzesRouter);
 app.use("/api/v1/bins", binsRouter);
+app.use("/api/v1/admin", adminRouter);
 app.use("/api/v1/local", localRouter);
 
 // Root
@@ -235,6 +237,7 @@ app.get("/", (_req, res) => {
       "GET /api/v1/redemptions",
       "GET /api/v1/quizzes",
       "GET /api/v1/bins/qr?qr_code=...",
+      "GET /api/v1/admin/analytics",
     ],
   });
 });
