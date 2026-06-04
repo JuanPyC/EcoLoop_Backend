@@ -1,12 +1,18 @@
-import { IStationsRepository } from "../../../domain/repositories/IStationsRepository";
+import { IStationsRepository, CreateStationInput } from "../../../domain/repositories/IStationsRepository";
+import { ValidationError } from "../../../domain/errors";
 
 export class CreateStationUseCase {
   constructor(private stationsRepo: IStationsRepository) {}
 
-  async execute(data: { name: string; location: string; description?: string }) {
+  async execute(data: CreateStationInput) {
     if (!data.name || !data.location) {
-      throw new Error("name y location son requeridos");
+      throw new ValidationError("name y location son requeridos");
     }
-    return this.stationsRepo.createStation(data);
+    return this.stationsRepo.createStation({
+      name: data.name,
+      location: data.location,
+      description: data.description ?? null,
+      createDefaultBins: data.createDefaultBins ?? true,
+    });
   }
 }

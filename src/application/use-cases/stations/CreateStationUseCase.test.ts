@@ -2,18 +2,19 @@ import { describe, it, expect, vi } from "vitest";
 import { CreateStationUseCase } from "./CreateStationUseCase";
 import { IStationsRepository } from "../../../domain/repositories/IStationsRepository";
 import { WasteStation } from "../../../domain/entities";
+import { ValidationError } from "../../../domain/errors";
 
 describe("CreateStationUseCase", () => {
-  it("should create a station successfully when name and location are provided", async () => {
-    const mockStation: WasteStation = {
-      id: "station-1",
-      name: "Estación Centro",
-      location: "Calle 10 # 5-20",
-      description: "Estación principal",
-      created_at: new Date(),
-      updated_at: new Date(),
-    };
+  const mockStation: WasteStation = {
+    id: "station-1",
+    name: "Estación Centro",
+    location: "Calle 10 # 5-20",
+    description: "Estación principal",
+    created_at: new Date(),
+    updated_at: new Date(),
+  };
 
+  it("should create a station with default bins by default", async () => {
     const mockRepo = {
       listStations: vi.fn(),
       getStationById: vi.fn(),
@@ -23,19 +24,46 @@ describe("CreateStationUseCase", () => {
     } as IStationsRepository;
 
     const useCase = new CreateStationUseCase(mockRepo);
-    const data = {
+    const result = await useCase.execute({
       name: "Estación Centro",
       location: "Calle 10 # 5-20",
       description: "Estación principal",
-    };
+    });
 
-    const result = await useCase.execute(data);
-
-    expect(mockRepo.createStation).toHaveBeenCalledWith(data);
+    expect(mockRepo.createStation).toHaveBeenCalledWith({
+      name: "Estación Centro",
+      location: "Calle 10 # 5-20",
+      description: "Estación principal",
+      createDefaultBins: true,
+    });
     expect(result).toEqual(mockStation);
   });
 
-  it("should throw an error when name is missing", async () => {
+  it("should respect explicit createDefaultBins=false", async () => {
+    const mockRepo = {
+      listStations: vi.fn(),
+      getStationById: vi.fn(),
+      createStation: vi.fn().mockResolvedValue(mockStation),
+      updateStation: vi.fn(),
+      deleteStation: vi.fn(),
+    } as IStationsRepository;
+
+    const useCase = new CreateStationUseCase(mockRepo);
+    await useCase.execute({
+      name: "Estación Centro",
+      location: "Calle 10",
+      createDefaultBins: false,
+    });
+
+    expect(mockRepo.createStation).toHaveBeenCalledWith({
+      name: "Estación Centro",
+      location: "Calle 10",
+      description: null,
+      createDefaultBins: false,
+    });
+  });
+
+  it("should throw ValidationError when name is missing", async () => {
     const mockRepo = {
       createStation: vi.fn(),
     } as unknown as IStationsRepository;
@@ -44,12 +72,12 @@ describe("CreateStationUseCase", () => {
 
     await expect(
       useCase.execute({ name: "", location: "Calle 10" })
-    ).rejects.toThrow("name y location son requeridos");
+    ).rejects.toThrow(ValidationError);
 
     expect(mockRepo.createStation).not.toHaveBeenCalled();
   });
 
-  it("should throw an error when location is missing", async () => {
+  it("should throw ValidationError when location is missing", async () => {
     const mockRepo = {
       createStation: vi.fn(),
     } as unknown as IStationsRepository;
@@ -58,7 +86,7 @@ describe("CreateStationUseCase", () => {
 
     await expect(
       useCase.execute({ name: "Estación Centro", location: "" })
-    ).rejects.toThrow("name y location son requeridos");
+    ).rejects.toThrow(ValidationError);
 
     expect(mockRepo.createStation).not.toHaveBeenCalled();
   });
